@@ -6,6 +6,33 @@ His project provides the necessary modified files, with the expectation that you
 
 This repository has also been significantly chopped down; CPUFit, tests, Java, etc have all been removed.
 
+# Updated Quick Start Instructions
+
+Most of the original Readme has been left in tact below. You will have to compile from source. The following works for me, on Arch Linux
+
+`git clone https://github.com/andresh3/Gpufit-Custom.git`
+
+`mkdir build`
+
+`cd build`
+
+`cmake -DCMAKE_BUILD_TYPE=RELEASE -DCUDA_ARCHITECTURES=Auto ../Gpufit-Custom/`
+
+`make`
+
+Once you've built from source, you can install the Gpufit python package
+
+CD into your project directory, and optionally activate your virtual environment:
+
+`cd /Path/To/Project`
+
+`source venv/bin/activate`
+
+
+Then install the wheel (whatever the .whl file in dist is called use it):
+
+`pip install /Path/To/build/Gpufit/pyGpufit/dist/pygpufit-1.2.0-py2.py3-none-any.whl`
+
 # Gpufit
 
 Levenberg Marquardt curve fitting in CUDA.
