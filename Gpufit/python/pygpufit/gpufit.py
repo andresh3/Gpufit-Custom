@@ -4,6 +4,8 @@ See https://github.com/gpufit/Gpufit, http://gpufit.readthedocs.io/en/latest/bin
 
 The binding is based on ctypes.
 See https://docs.python.org/3.5/library/ctypes.html, http://www.scipy-lectures.org/advanced/interfacing_with_c/interfacing_with_c.html
+
+Modified by Peter Spencer, March 2022 for interferometry
 """
 
 import os
@@ -48,6 +50,7 @@ get_cuda_version_func.argtypes = [POINTER(c_int), POINTER(c_int)]
 
 class ModelID:
     GAUSS_1D = 0
+    GAUSS_1D_TWIN = 30
     GAUSS_2D = 1
     GAUSS_2D_ELLIPTIC = 2
     GAUSS_2D_ROTATED = 3
@@ -60,6 +63,9 @@ class ModelID:
     SPLINE_3D = 10
     SPLINE_3D_MULTICHANNEL = 11
     SPLINE_3D_PHASE_MULTICHANNEL = 12
+    INTERFEROGRAM_1DA = 20
+    INTERFEROGRAM_1DB = 21
+    INTERFEROGRAM_1D_TWIN = 22
 
 
 class EstimatorID:

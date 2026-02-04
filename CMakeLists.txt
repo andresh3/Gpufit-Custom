@@ -61,46 +61,6 @@ if( DEFINED DOUBLE_PRECISION AND DOUBLE_PRECISION)
     add_definitions( -DGPUFIT_DOUBLE )
 endif()
 
-# Boost
-
-find_package( Boost 1.58.0 )
-if( Boost_FOUND )
-  function( add_boost_test modules name )
-    string( REPLACE ";" "_" prefix "${modules}" )
-    set( target ${prefix}_Test_${name} )
-    add_executable( ${target} ${name}.cpp
-      ${PROJECT_SOURCE_DIR}/tests/utils.h
-      ${PROJECT_SOURCE_DIR}/tests/utils.cpp
-    )
-    target_include_directories( ${target} PRIVATE ${PROJECT_SOURCE_DIR} )
-    target_link_libraries( ${target} ${modules} Boost::boost )
-    set_property( TARGET ${target}
-      PROPERTY RUNTIME_OUTPUT_DIRECTORY "${PROJECT_BINARY_DIR}" )
-    set_property( TARGET ${target} PROPERTY FOLDER Tests )
-
-    add_test( NAME ${target}
-      COMMAND ${target} --build_info --log_level=all --report_level=detailed )
-  endfunction()
-else()
-  set( BUILD_TESTING OFF )
-  message( WARNING "Boost NOT found - skipping tests! (set BOOST_ROOT manually)" )
-endif()
-
-# MATLAB
-
-find_package( Matlab COMPONENTS MX_LIBRARY )
-if( Matlab_FOUND )
-  find_program( Matlab_EXECUTABLE matlab
-    PATHS "${Matlab_ROOT_DIR}/bin" PATH_SUFFIXES win32 win64 NO_DEFAULT_PATH )
-  function( add_matlab_launcher target )
-    set( paths "${CMAKE_BINARY_DIR}/$(Configuration)" ${ARGN} )
-    list( GET paths -1 working_directory )
-    string( REPLACE ";" "','" paths "${paths}" )
-    set( arguments "-r addpath('${paths}');addpath(genpath(pwd))" )
-    add_launcher( ${target} "${Matlab_EXECUTABLE}" "${arguments}" "${working_directory}" )
-  endfunction()
-endif()
-
 # Python
 
 find_package( PythonInterp )
@@ -132,17 +92,9 @@ else()
   message( WARNING "PDFLatex NOT found - cannot convert documentation to PDF!" )
 endif()
 
-# Cpufit
-
-add_subdirectory( Cpufit )
-
 # Gpufit
 
 add_subdirectory( Gpufit )
-
-# Examples using Gpufit and Cpufit
-
-add_subdirectory( examples/c++/gpu_vs_cpu_profiling )
 
 # Launcher
 #
@@ -159,20 +111,6 @@ else()
 	file( TO_CMAKE_PATH "$ENV{HOME}" home )
 endif()
 
-if( Matlab_FOUND )
-  set( Matlab_WORKING_DIRECTORY "${home}" CACHE PATH "MATLAB working directory" )
-  if( Matlab_WORKING_DIRECTORY )
-    add_custom_target( RUN_MATLAB )
-    set_property( TARGET RUN_MATLAB PROPERTY FOLDER CMakePredefinedTargets )
-    add_dependencies( RUN_MATLAB CpufitMex GpufitMex )
-    add_matlab_launcher( RUN_MATLAB
-      "${CMAKE_SOURCE_DIR}/Cpufit/matlab"
-      "${CMAKE_SOURCE_DIR}/Gpufit/matlab"
-      "${Matlab_WORKING_DIRECTORY}"
-    )
-  endif()
-endif()
-
 if( PYTHONINTERP_FOUND )
   set( Python_WORKING_DIRECTORY "${home}" CACHE PATH "Python working directory" )
   if( Python_WORKING_DIRECTORY )
@@ -183,21 +121,10 @@ if( PYTHONINTERP_FOUND )
       "${CMAKE_SOURCE_DIR}/Gpufit/python"
       "${Python_WORKING_DIRECTORY}"
     )
-	add_custom_target( RUN_PYTHON_CPUFIT )
-    set_property( TARGET RUN_PYTHON_CPUFIT PROPERTY FOLDER CMakePredefinedTargets )
-    add_dependencies( RUN_PYTHON_CPUFIT Cpufit )
-    add_python_launcher( RUN_PYTHON_CPUFIT
-      "${CMAKE_SOURCE_DIR}/Cpufit/python"
-      "${Python_WORKING_DIRECTORY}"
-    )
   endif()
 endif()
 
 # Tests
-
-if( BUILD_TESTING )
-  add_subdirectory( tests )
-endif()
 
 # Package
 

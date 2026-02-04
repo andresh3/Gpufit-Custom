@@ -232,19 +232,8 @@ endif()
 
 #install( TARGETS Gpufit RUNTIME DESTINATION bin )
 
-# Examples using only Gpufit
-
-add_subdirectory( ../examples/c++ "${CMAKE_CURRENT_BINARY_DIR}/examples" )
-
-# Tests
-
-if( BUILD_TESTING )
-	add_subdirectory( tests )
-endif()
 
 # Bindings
 
-add_subdirectory( matlab )
 add_subdirectory( python )
-add_subdirectory( java )
 
